@@ -1,0 +1,24 @@
+doctype html
+html(lang='en')
+  include ../common/head.pug
+  +head("Edit Album")
+  body
+    header
+      include ../common/navbar.pug
+      +navbar(user)
+      .container
+        .row.align-items-center
+          .col-md-6.order-md-1.text-center.text-md-left.pr-md-5
+            h1 Edit Album
+            form(action="/"+album.id+"/edit", method="POST")
+              .formgroup
+                input(name="album_title", type="text", placeholder="Enter title", value=album.title).mb-3.form-control
+                input(name="album_genre", type="text", placeholder="Enter genre", value=album.genre).mb-3.form-control
+                - var date = new Date(album.releaseDate)
+                - var yyyy = date.getUTCFullYear()
+                - var mm = date.getUTCMonth()<9? '0'+(date.getUTCMonth()+1): (date.getUTCMonth()+1)
+                - var dd = date.getUTCDate()<10? '0'+date.getUTCDate(): date.getUTCDate()
+                input(name="album_releaseDate", type="date", placeholder="Enter release date", value=`${yyyy}-${mm}-${dd}`).mb-3.form-control
+                button(type="submit").btn.btn-primary Update
+    include ../common/footer.pug
+    +footer()
