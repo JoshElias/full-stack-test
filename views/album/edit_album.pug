@@ -10,6 +10,8 @@ html(lang='en')
         .row.align-items-center
           .col-md-6.order-md-1.text-center.text-md-left.pr-md-5
             h1 Edit Album
+            if (errors && errors.length)
+              p.large.text-danger #{errors}
             form(action="/"+album.id+"/edit", method="POST")
               .formgroup
                 input(name="album_title", type="text", placeholder="Enter title", value=album.title).mb-3.form-control
