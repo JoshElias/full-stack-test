@@ -7,7 +7,7 @@ exports.logErrorHandler = function(err, req, res, next){
 
 exports.xhrErrorHandler = function(err, req, res, next){
     if(req.xhr){
-        res.status(500).send({error: 'something wrong'})
+        res.status(500).send({error: 'Something is wrong'})
     }
     else{
         next(err);
@@ -15,7 +15,7 @@ exports.xhrErrorHandler = function(err, req, res, next){
 }
 
 exports.notFoundErrorHandler = function(err, req, res, next){
-    next(createError(404)); 
+    next(createError(404, 'You are entering a secret nuclear site in China')); 
 }
 
 exports.finalErrorHandler = function(err, req, res, next){

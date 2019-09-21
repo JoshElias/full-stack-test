@@ -67,6 +67,13 @@ exports.login = function(req, res, next) {
 
 exports.logout = function(req, res, next) { 
 	req.logout();
-	req.session.destroy();
-	res.redirect('/');
+    req.session.destroy( function(err){
+        req.session = null;
+        res.clearCookie(process.env.SESSION_NAME);
+
+        //clear jwt on log out (prevent cache when hit back button)
+        res.cookie('json-web-token', '');
+        
+        res.redirect('/');
+    });
 }

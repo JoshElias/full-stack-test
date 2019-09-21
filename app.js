@@ -46,7 +46,7 @@ mongoose.connect(process.env.DB_CONNECTION, {
 
 app.use(session({ 
   secret: process.env.SESSION_SECRET,
-  name: 'longs_session',
+  name: process.env.SESSION_NAME,
   cookie: { 
     maxAge: 1000 * 60 * 60 * 24, // 1 day.
   },
@@ -59,7 +59,6 @@ app.use(passport.session());
 
 // to app routes
 const appRouter = require('./routes/app');
-
 app.use('/', appRouter);
 
 //handle all errors:from next(error) at the end

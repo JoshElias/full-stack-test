@@ -7,6 +7,6 @@ html(lang='en')
       .container
         .row
           .col-md-12
-            h1= message
-            h2.text-danger= error.status
-            pre.text-danger #{error.stack}
+            h1= error.status
+            h2.text-danger= error.message
+            //- pre.text-danger #{error.stack}
