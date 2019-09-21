@@ -13,9 +13,34 @@ exports.show_signup = function(req, res, next) {
 	return res.render('user/signup', { formData: {}, errors: {} });
 }
 
-const rerender_signup = function(errors, req, res, next) {
-	return res.render('user/signup', { formData: req.body, errors: errors});
-}
+const rerender_signup = (errors, req, res, next) =>
+	res.render('user/signup', { formData: req.body, errors: errors});
+
+const authenticateWithJWT = (successRedirect, failureRedirect, req, res, next) => 
+    passport.authenticate('local', function(err, user, info) {
+        if (err) { 
+            return next(err); 
+        }
+        if (!user) { 
+            return res.redirect(failureRedirect); 
+        }
+        req.logIn(user, function(err) {
+            if (err) { 
+                return next(err); 
+            }
+            const payload = {
+                id: user._id,
+                email: user.email, 
+            };
+
+            //generate jwt and send back in cookie (or in headers)
+            const token = jwt.sign(payload, tokenSecret, { 
+                expiresIn: '1d',
+            });
+            res.cookie('json-web-token', token);
+            return res.redirect(successRedirect);
+        });
+    });
 
 exports.signup = async function(req, res, next) {
     let errors = {};
@@ -31,38 +56,12 @@ exports.signup = async function(req, res, next) {
     });
 
     await newUser.save();    
-    passport.authenticate('local', {
-        successRedirect: "/",
-        failureRedirect: "/signup",
-        failureFlash: true
-    })(req, res, next);	
+    
+    authenticateWithJWT('/', '/signup', req, res, next)(req, res, next);
 }
 
 exports.login = function(req, res, next) { 
-	passport.authenticate('local', function(err, user, info) {
-        if (err) { 
-            return next(err); 
-        }
-        if (!user) { 
-            return res.redirect('/login'); 
-        }
-        req.logIn(user, function(err) {
-            if (err) { 
-                return next(err); 
-            }
-            var payload = {
-                id: user._id,
-                email: user.email, 
-            };
-
-            //generate jwt and send back in cookie (or in headers)
-            var token = jwt.sign(payload, tokenSecret, { 
-              expiresIn: '1d',
-            });
-            res.cookie('json-web-token', token);
-            return res.redirect('/');
-        });
-      })(req, res, next);
+	authenticateWithJWT('/', '/login', req, res, next)(req, res, next);
 }
 
 exports.logout = function(req, res, next) { 
@@ -73,7 +72,7 @@ exports.logout = function(req, res, next) {
 
         //clear jwt on log out (prevent cache when hit back button)
         res.cookie('json-web-token', '');
-        
+
         res.redirect('/');
     });
 }
