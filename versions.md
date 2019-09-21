@@ -1,7 +1,9 @@
-1. jQuery library is loaded, simply because I used Boostrap which requires jQuery. I did not use jQuery for other purposes.
+1. Backend is using Node.js, Database is using MongoDB, REST call is using JavaScript fetch.
 
-2. JWT is used together with Passport.js for authentication
+2. jQuery library is loaded, simply because I used Boostrap which requires jQuery. It is not used for other purposes.
 
-3. View engine Pug is used
+3. JWT is used together with Passport.js for authentication
 
-4. Album created could be duplicated in database, can add a check before saving later 
+4. View engine Pug is used
+
+5. A to-be-created or to-be-updated album with the same title and genre as an existing one is considered duplication, and will not be saved. 
