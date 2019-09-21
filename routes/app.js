@@ -18,7 +18,7 @@ router.get('/', albumAPI.show_albums);
 router.post('/', isLoggedIn, albumAPI.create_album, albumAPI.show_albums);
 
 router.get('/:id/edit', isLoggedIn, albumAPI.show_edit_album);
-router.post('/:id/edit', isLoggedIn, albumAPI.edit_album);
+router.post('/:id/edit', isLoggedIn, albumAPI.edit_album, albumAPI.show_edit_album);
 
 router.post('/:id/delete', isLoggedIn, albumAPI.delete_album);
 
