@@ -15,4 +15,29 @@ const AlbumSchema = mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('Album', AlbumSchema);
+const thisModel = 'Album';
+
+AlbumSchema.statics.checkDuplicate = async function (query, sourceId, onSuccess, onError) {
+    try{
+        const album = await this.model(thisModel).findOne({
+            $and:[
+                query, 
+                {$ne: ObjectId(sourceId)}
+            ]
+        });
+
+        if(onSuccess && typeof onSuccess === "function") {
+            onSuccess();
+        }
+
+        return album;
+    }
+    catch(err){
+        if(onError && typeof onError === "function"){
+            onError(err);
+        }
+        return {error: err};
+    }
+};
+
+module.exports = mongoose.model(thisModel, AlbumSchema);
