@@ -34,6 +34,8 @@ html(lang='en')
                         button(onclick=`deleteAlbum('${album._id}')`).btn.btn-primary Delete
       if user
         form(action="/", method="POST").create-album-form
+          if (errors && errors.length)
+            p.large.text-danger #{errors}
           .formgroup
             input(name="album_title", type="text", placeholder="Enter title").mb-3.form-control
             input(name="album_genre", type="text", placeholder="Enter genre").mb-3.form-control
