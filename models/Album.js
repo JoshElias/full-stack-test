@@ -22,7 +22,7 @@ AlbumSchema.statics.checkDuplicate = async function (query, sourceId, onSuccess,
         const album = await this.model(thisModel).findOne({
             $and:[
                 query, 
-                {$ne: ObjectId(sourceId)}
+                {$ne: sourceId}
             ]
         });
 
