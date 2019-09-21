@@ -3,7 +3,7 @@ const Album = require('../models/Album');
 exports.show_albums = async function(req, res, next){
 	try{
 		const albums = await Album.find(); 
-		res.render('albums', { title: 'Albums', albums: albums, user: req.user });
+		res.render('albums', { title: 'Albums', albums: albums, user: req.user, errors: req.flash('albumCreateError') });
 	}
 	catch(err){
 		res.redirect('/');
@@ -12,18 +12,29 @@ exports.show_albums = async function(req, res, next){
 
 exports.create_album = async function(req, res, next) {
 	const {album_title, album_genre, album_releaseDate} = req.body;
-	await Album.create({
-		title: album_title,
-		genre: album_genre,
-		releaseDate: album_releaseDate
-	})
+	try{
+		const existAlbum = await Album.findOne({
+			"title": album_title,
+			"genre": album_genre
+		});
+		if(existAlbum) throw new Error('album with the same title and genre already exists');
+
+		await Album.create({
+			title: album_title,
+			genre: album_genre,
+			releaseDate: album_releaseDate
+		})
+	}
+	catch(err){
+		req.flash('albumCreateError', err.message);
+	}
 	next();
 }
 
 exports.show_edit_album = async function(req, res, next) {
 	try{
 		const album = await Album.findOne({ _id: req.params.id });
-		res.render('album/edit_album', { album: album, user: req.user });
+		res.render('album/edit_album', { album: album, user: req.user, errors: req.flash('albumUpdateError') });
 	}
 	catch(err){
 		res.redirect('/');
@@ -36,7 +47,15 @@ exports.edit_album = async function(req, res, next) {
 		const album = await Album.findOne({
 			_id: req.params.id 
 		});
-		if(!album) throw new Error();
+		if(!album) throw new Error('album not exist');
+
+		const duplicateAlbum = await Album.findOne({
+			"title": album_title,
+			"genre": album_genre,
+			"_id": {$ne: req.params.id}
+		});
+		if(duplicateAlbum) throw new Error('The targeted title and genre combination already exists');
+
 		const updatedAlbum = await Album.findOneAndUpdate(
 			{ _id: req.params.id },
 			{ $set: {
@@ -47,12 +66,13 @@ exports.edit_album = async function(req, res, next) {
 			},
 			{new: true} // force return updated
 		);
-		if(!updatedAlbum) throw new Error();
-		// res.json(updatedAlbum);
+		if(!updatedAlbum) throw new Error('album update not succeed');
+		
 		res.redirect('/');
 	}
 	catch(err){
-		res.json({message: "wrong in update album"})
+		req.flash('albumUpdateError', err.message);
+		next();
 	};
 }
 
