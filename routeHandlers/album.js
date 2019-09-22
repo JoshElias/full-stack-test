@@ -1,9 +1,10 @@
 const Album = require('../models/Album');
+const {validateCreateAlbumFields} = require('../validators/album');
 
 exports.show_albums = async function(req, res, next){
 	try{
 		const albums = await Album.find(); 
-		res.render('albums', { title: 'Albums', albums: albums, user: req.user, errors: req.flash('albumCreateError') });
+		res.render('albums', { title: 'Albums', albums: albums, user: req.user, formData: req.body, errors: req.flash('albumCreateError') });
 	}
 	catch(err){
 		res.redirect('/');
@@ -13,6 +14,9 @@ exports.show_albums = async function(req, res, next){
 exports.create_album = async function(req, res, next) {
 	const {album_title, album_genre, album_releaseDate} = req.body;
 	try{
+		const errors = validateCreateAlbumFields(req);
+		if(errors.length) throw new Error(errors);
+		
 		const existAlbum = await Album.findOne({
 			"title": album_title,
 			"genre": album_genre
@@ -23,7 +27,7 @@ exports.create_album = async function(req, res, next) {
 			title: album_title,
 			genre: album_genre,
 			releaseDate: album_releaseDate
-		})
+		});
 	}
 	catch(err){
 		req.flash('albumCreateError', err.message);

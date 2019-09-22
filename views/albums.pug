@@ -36,11 +36,12 @@ html(lang='en')
         form(action="/", method="POST").create-album-form
           if (errors && errors.length)
             p.large.text-danger #{errors}
-          .formgroup
-            input(name="album_title", type="text", placeholder="Enter title").mb-3.form-control
-            input(name="album_genre", type="text", placeholder="Enter genre").mb-3.form-control
-            input(name="album_releaseDate", type="date", placeholder="Enter release date").mb-3.form-control
-            button(type="submit").btn.btn-primary Create Album
+          include common/albumForm.pug
+          - var title = formData.album_title?formData.album_title: ''
+          - var genre = formData.album_genre?formData.album_genre: ''
+          - var date = formData.album_releaseDate?new Date(formData.album_releaseDate): new Date('')
+          - var submit = 'Create Album'
+          +albumForm(title, genre, date, submit)
     include common/footer.pug
     +footer()
     script(src='/js/album.js')

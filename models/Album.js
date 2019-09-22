@@ -11,7 +11,7 @@ const AlbumSchema = mongoose.Schema({
     },
     releaseDate: {
         type: Date,
-        default: new Date()
+        required: true
     }
 });
 
