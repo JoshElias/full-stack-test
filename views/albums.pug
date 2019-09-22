@@ -1,0 +1,47 @@
+doctype html
+html(lang='en')
+  include common/head.pug
+  +head("Albums")
+  body
+    header
+      include common/navbar.pug
+      +navbar(user)
+      .container
+        .row.align-items-center
+          .col-md-6.order-md-1.text-center.text-md-left.pr-md-5
+            h1.mb-3 List of Albums
+            table.table
+              thead
+                tr
+                  th(scope="col") Title
+                  th(scope="col") Genre
+                  th(scope="col") Release Date
+                  if user
+                    th(scope="col") 
+                tr
+              tbody                
+                for album in albums
+                  tr(id=`album_${album._id}`)
+                    td
+                      a(href=(user?`/${album._id}/edit`: false), style="text-decoration:none;") #{album.title}
+                    td
+                      a(href=(user?`/${album._id}/edit`: false), style="text-decoration:none;") #{album.genre}
+                    - var date = new Date(album.releaseDate).toUTCString()
+                    td 
+                      a(href=(user?`/${album._id}/edit`: false), style="text-decoration:none;") #{date}
+                    if user
+                      td 
+                        button(onclick=`deleteAlbum('${album._id}')`).btn.btn-primary Delete
+      if user
+        form(action="/", method="POST").create-album-form
+          if (errors && errors.length)
+            p.large.text-danger #{errors}
+          include common/albumForm.pug
+          - var title = formData.album_title?formData.album_title: ''
+          - var genre = formData.album_genre?formData.album_genre: ''
+          - var date = formData.album_releaseDate?new Date(formData.album_releaseDate): new Date('')
+          - var submit = 'Create Album'
+          +albumForm(title, genre, date, submit)
+    include common/footer.pug
+    +footer()
+    script(src='/js/album.js')

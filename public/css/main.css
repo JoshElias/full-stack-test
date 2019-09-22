@@ -1,0 +1,16 @@
+.topNav {
+    position: fixed;
+    top: 0;
+    z-index: 2;
+    width: 100%;
+}
+.container {
+    position: relative;
+    top: 100px;
+}
+.create-album-form {
+    border-style: solid;
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+}
