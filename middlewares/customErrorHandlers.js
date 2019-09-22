@@ -15,7 +15,7 @@ exports.xhrErrorHandler = function(err, req, res, next){
 }
 
 exports.notFoundErrorHandler = function(err, req, res, next){
-    next(createError(404, 'You are entering a secret nuclear site in China')); 
+    next(createError(404, 'You are entering a secret nuclear site in China, all albums are nuked!')); 
 }
 
 exports.finalErrorHandler = function(err, req, res, next){
